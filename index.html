@@ -513,6 +513,84 @@
         transform: translateY(6px);
       }
 
+      /* PAGE LOADER */
+      body.is-loading {
+        overflow: hidden;
+      }
+
+      .page-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        padding: 2rem;
+        background: linear-gradient(
+          145deg,
+          #1a0a12 0%,
+          #3d1530 45%,
+          #7c2d5a 100%
+        );
+        transition: opacity 0.55s ease, visibility 0.55s ease;
+      }
+
+      .page-loader.is-done {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .page-loader__spinner {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 4px solid rgba(255, 255, 255, 0.15);
+        border-top-color: #ffb3c9;
+        animation: loaderSpin 0.85s linear infinite;
+      }
+
+      @keyframes loaderSpin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .page-loader__label {
+        margin: 0;
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.75);
+      }
+
+      .page-loader__count {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(3.5rem, 14vw, 5.5rem);
+        font-weight: 600;
+        line-height: 1;
+        color: #fff;
+        text-shadow: 0 8px 32px rgba(255, 150, 180, 0.45);
+      }
+
+      .page-loader__count.is-tick {
+        animation: countPop 0.35s ease;
+      }
+
+      @keyframes countPop {
+        from {
+          opacity: 0.5;
+          transform: scale(0.92);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .page-bg,
         .blob,
@@ -536,11 +614,33 @@
         .heart {
           display: none;
         }
+
+        .page-loader__spinner {
+          animation: none;
+          border-top-color: rgba(255, 255, 255, 0.45);
+        }
+
+        .page-loader__count.is-tick {
+          animation: none;
+        }
       }
     </style>
   </head>
 
-  <body>
+  <body class="is-loading">
+    <div
+      id="page-loader"
+      class="page-loader"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label="Loading page"
+    >
+      <div class="page-loader__spinner" aria-hidden="true"></div>
+      <p class="page-loader__label">Get ready</p>
+      <div class="page-loader__count" id="loader-count">10</div>
+    </div>
+
     <div class="page-bg" aria-hidden="true"></div>
     <div class="blob blob--1" aria-hidden="true"></div>
     <div class="blob blob--2" aria-hidden="true"></div>
@@ -622,6 +722,43 @@
     </div>
 
     <script>
+      /* ⏳ PRE-LOAD: 10 → 1 + spinner */
+      (function initPageLoader() {
+        const loader = document.getElementById("page-loader");
+        const countEl = document.getElementById("loader-count");
+        const reduced = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        const stepMs = reduced ? 280 : 1000;
+
+        let n = 10;
+
+        function finish() {
+          loader.classList.add("is-done");
+          loader.setAttribute("aria-busy", "false");
+          document.body.classList.remove("is-loading");
+          setTimeout(() => loader.remove(), 600);
+        }
+
+        function step() {
+          countEl.textContent = String(n);
+          if (!reduced) {
+            countEl.classList.remove("is-tick");
+            void countEl.offsetWidth;
+            countEl.classList.add("is-tick");
+          }
+
+          if (n === 1) {
+            setTimeout(finish, stepMs);
+            return;
+          }
+          n -= 1;
+          setTimeout(step, stepMs);
+        }
+
+        step();
+      })();
+
       /* 🎉 COUNTDOWN */
       const birthday = new Date("2026-04-01").getTime();
 
