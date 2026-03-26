@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday My Love</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Outfit:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --rose-deep: #c94b7c;
+        --rose-light: #ff8fab;
+        --cream: #fff5f7;
+        --glass: rgba(255, 255, 255, 0.22);
+        --glass-border: rgba(255, 255, 255, 0.45);
+        --shadow: 0 25px 50px -12px rgba(180, 60, 100, 0.35);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Outfit", system-ui, sans-serif;
+        font-weight: 400;
+        color: var(--cream);
+        text-align: center;
+        overflow-x: hidden;
+        background: #1a0a12;
+      }
+
+      /* Animated gradient + blobs */
+      .page-bg {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background: linear-gradient(
+          125deg,
+          #2d0a1a 0%,
+          #5c1a3a 25%,
+          #c94b7c 50%,
+          #ff8fab 75%,
+          #ffd6e0 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 18s ease infinite;
+      }
+
+      .blob {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.45;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      .blob--1 {
+        width: min(90vw, 420px);
+        height: min(90vw, 420px);
+        background: #ff6b9d;
+        top: -10%;
+        left: -15%;
+        animation: floatBlob 14s ease-in-out infinite;
+      }
+
+      .blob--2 {
+        width: min(80vw, 380px);
+        height: min(80vw, 380px);
+        background: #9b5de5;
+        bottom: -5%;
+        right: -20%;
+        animation: floatBlob 16s ease-in-out infinite reverse;
+      }
+
+      .blob--3 {
+        width: min(60vw, 280px);
+        height: min(60vw, 280px);
+        background: #ffc6d9;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: pulseBlob 12s ease-in-out infinite;
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      @keyframes floatBlob {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(30px, -25px) scale(1.05);
+        }
+      }
+
+      @keyframes pulseBlob {
+        0%,
+        100% {
+          opacity: 0.35;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          opacity: 0.55;
+          transform: translate(-50%, -50%) scale(1.12);
+        }
+      }
+
+      /* Floating hearts */
+      .hearts {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .heart {
+        position: absolute;
+        font-size: clamp(0.75rem, 2vw, 1.25rem);
+        color: rgba(255, 255, 255, 0.35);
+        animation: riseHeart linear infinite;
+      }
+
+      .heart:nth-child(1) {
+        left: 8%;
+        animation-duration: 12s;
+        animation-delay: 0s;
+      }
+      .heart:nth-child(2) {
+        left: 22%;
+        animation-duration: 15s;
+        animation-delay: -3s;
+        font-size: 1rem;
+      }
+      .heart:nth-child(3) {
+        left: 45%;
+        animation-duration: 11s;
+        animation-delay: -6s;
+      }
+      .heart:nth-child(4) {
+        left: 68%;
+        animation-duration: 14s;
+        animation-delay: -2s;
+      }
+      .heart:nth-child(5) {
+        left: 85%;
+        animation-duration: 13s;
+        animation-delay: -8s;
+      }
+      .heart:nth-child(6) {
+        left: 55%;
+        animation-duration: 16s;
+        animation-delay: -5s;
+        font-size: 0.7rem;
+      }
+
+      @keyframes riseHeart {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
+        }
+        8% {
+          opacity: 0.6;
+        }
+        92% {
+          opacity: 0.4;
+        }
+        100% {
+          transform: translateY(-20vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* HERO */
+      .hero {
+        position: relative;
+        z-index: 1;
+        padding: clamp(2.5rem, 8vw, 4rem) clamp(1.25rem, 5vw, 2rem);
+        max-width: 640px;
+        margin: 0 auto;
+      }
+
+      .hero-card {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        padding: clamp(1.75rem, 5vw, 2.75rem);
+        box-shadow: var(--shadow);
+        animation: cardIn 1s ease-out both;
+      }
+
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(28px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .hero-badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 1rem;
+        animation: fadeInUp 0.8s ease 0.15s both;
+      }
+
+      h1 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(2.25rem, 6vw, 3.25rem);
+        font-weight: 600;
+        margin: 0 0 0.35em;
+        line-height: 1.15;
+        background: linear-gradient(
+          120deg,
+          #fff 0%,
+          #ffe4ec 40%,
+          #fff 80%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: shimmer 6s ease infinite, fadeInUp 0.8s ease 0.25s both;
+      }
+
+      @keyframes shimmer {
+        0%,
+        100% {
+          background-position: 0% center;
+        }
+        50% {
+          background-position: 100% center;
+        }
+      }
+
+      h2 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-weight: 500;
+        font-style: italic;
+        font-size: clamp(1.15rem, 3vw, 1.5rem);
+        margin: 0 0 1.25rem;
+        color: rgba(255, 255, 255, 0.92);
+        animation: fadeInUp 0.8s ease 0.35s both;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero p {
+        font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+        line-height: 1.65;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.92);
+        margin: 0 0 1.5rem;
+        animation: fadeInUp 0.8s ease 0.45s both;
+      }
+
+      /* COUNTDOWN */
+      .countdown {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem 1rem;
+        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+        font-weight: 500;
+        margin: 0 0 1.25rem;
+        padding: 0.65rem 1.25rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        animation: fadeInUp 0.8s ease 0.4s both, countdownPulse 3s ease-in-out
+          infinite;
+      }
+
+      @keyframes countdownPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.15);
+        }
+        50% {
+          box-shadow: 0 0 24px 2px rgba(255, 200, 220, 0.35);
+        }
+      }
+
+      /* BUTTON */
+      .btn-wrap {
+        margin-top: 0.25rem;
+        animation: fadeInUp 0.8s ease 0.55s both;
+      }
+
+      button {
+        position: relative;
+        padding: 0.85rem 1.85rem;
+        border: none;
+        border-radius: 999px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--rose-deep);
+        cursor: pointer;
+        background: linear-gradient(145deg, #ffffff, #ffe8ef);
+        box-shadow: 0 8px 32px rgba(201, 75, 124, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+          box-shadow 0.35s ease;
+        overflow: hidden;
+      }
+
+      button::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          120deg,
+          transparent 40%,
+          rgba(255, 255, 255, 0.55) 50%,
+          transparent 60%
+        );
+        transform: translateX(-120%);
+        transition: transform 0.6s ease;
+      }
+
+      button:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 14px 40px rgba(201, 75, 124, 0.45);
+      }
+
+      button:hover::after {
+        transform: translateX(120%);
+      }
+
+      button:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      .surprise-msg {
+        display: none;
+        margin-top: 1.25rem;
+        font-size: 1.05rem;
+        font-weight: 500;
+        color: #fff;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .surprise-msg.is-visible {
+        display: block;
+        animation: surprisePop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      @keyframes surprisePop {
+        0% {
+          opacity: 0;
+          transform: scale(0.85) translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      /* GALLERY */
+      .gallery-wrap {
+        position: relative;
+        z-index: 1;
+        padding: 0 0 2rem;
+      }
+
+      .gallery-title {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+        font-weight: 600;
+        margin: 0 0 1rem;
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .gallery {
+        display: flex;
+        overflow-x: auto;
+        gap: 1rem;
+        padding: 0.5rem clamp(1rem, 4vw, 2rem) 1.25rem;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+      }
+
+      .gallery::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .gallery::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 999px;
+      }
+
+      .gallery-card {
+        margin: 0;
+        flex: 0 0 auto;
+        scroll-snap-align: center;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+          box-shadow 0.45s ease;
+        animation: galleryStagger 0.7s ease backwards;
+      }
+
+      .gallery-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .gallery-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .gallery-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .gallery-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes galleryStagger {
+        from {
+          opacity: 0;
+          transform: translateY(24px) scale(0.94);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .gallery-card:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow: 0 24px 56px rgba(0, 0, 0, 0.28);
+      }
+
+      .gallery-card img {
+        display: block;
+        height: 200px;
+        width: auto;
+        max-width: 280px;
+        object-fit: cover;
+      }
+
+      /* NOTES */
+      .notes-wrap {
+        position: relative;
+        z-index: 1;
+        padding: 0 1.25rem 3rem;
+        max-width: 520px;
+        margin: 0 auto;
+      }
+
+      .notes {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(1.2rem, 3vw, 1.45rem);
+        font-style: italic;
+        font-weight: 500;
+        line-height: 1.5;
+        padding: 1.25rem 1.5rem;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        min-height: 3.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.45s ease, transform 0.45s ease;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
+
+      .notes.is-fading {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .page-bg,
+        .blob,
+        .heart,
+        h1,
+        .countdown,
+        button::after {
+          animation: none !important;
+        }
+
+        .hero-card,
+        .gallery-card,
+        .surprise-msg.is-visible {
+          animation: none !important;
+        }
+
+        .page-bg {
+          background-size: 100% 100%;
+        }
+
+        .heart {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page-bg" aria-hidden="true"></div>
+    <div class="blob blob--1" aria-hidden="true"></div>
+    <div class="blob blob--2" aria-hidden="true"></div>
+    <div class="blob blob--3" aria-hidden="true"></div>
+
+    <div class="hearts" aria-hidden="true">
+      <span class="heart">♥</span>
+      <span class="heart">♥</span>
+      <span class="heart">♥</span>
+      <span class="heart">♥</span>
+      <span class="heart">♥</span>
+      <span class="heart">♥</span>
+    </div>
+
+    <!-- 🎵 BACKGROUND MUSIC -->
+    <audio autoplay loop>
+      <source src="music.mp3" type="audio/mpeg" />
+    </audio>
+
+    <div class="hero">
+      <div class="hero-card">
+        <span class="hero-badge">Special day</span>
+        <h1>Happy Birthday ❤️</h1>
+        <h2>My Beautiful Wife</h2>
+
+        <!-- ⏳ COUNTDOWN -->
+        <div class="countdown" id="countdown"></div>
+
+        <p>
+          You are my happiness, my strength, and my forever love. I’m so lucky
+          to have you in my life.
+        </p>
+
+        <div class="btn-wrap">
+          <button type="button" onclick="showSurprise()">
+            Click for Surprise 💕
+          </button>
+        </div>
+        <p class="surprise-msg" id="surprise">
+          I love you more every single day ❤️
+        </p>
+      </div>
+    </div>
+
+    <!-- 🖼️ PHOTO GALLERY -->
+    <div class="gallery-wrap">
+      <p class="gallery-title">Our moments</p>
+      <div class="gallery">
+        <figure class="gallery-card">
+          <img
+            src="https://picsum.photos/id/1015/400/300"
+            alt="Gallery photo 1"
+          />
+        </figure>
+        <figure class="gallery-card">
+          <img
+            src="https://picsum.photos/id/1016/400/300"
+            alt="Gallery photo 2"
+          />
+        </figure>
+        <figure class="gallery-card">
+          <img
+            src="https://picsum.photos/id/1018/400/300"
+            alt="Gallery photo 3"
+          />
+        </figure>
+        <figure class="gallery-card">
+          <img
+            src="https://picsum.photos/id/1025/400/300"
+            alt="Gallery photo 4"
+          />
+        </figure>
+      </div>
+    </div>
+
+    <!-- 💌 LOVE NOTES -->
+    <div class="notes-wrap">
+      <div class="notes" id="notes">You make my world beautiful 💖</div>
+    </div>
+
+    <script>
+      /* 🎉 COUNTDOWN */
+      const birthday = new Date("2026-04-01").getTime();
+
+      setInterval(() => {
+        const now = new Date().getTime();
+        const diff = birthday - now;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+        );
+
+        document.getElementById("countdown").innerHTML =
+          "Countdown: " + days + " days " + hours + " hours";
+      }, 1000);
+
+      /* 💌 LOVE NOTES SLIDER */
+      const messages = [
+        "You make my world beautiful 💖",
+        "You are my everything ❤️",
+        "My life is better with you 💕",
+        "Forever yours 💖",
+        "You are my dream come true ✨",
+      ];
+
+      let i = 0;
+      const notesEl = document.getElementById("notes");
+      setInterval(() => {
+        notesEl.classList.add("is-fading");
+        setTimeout(() => {
+          i = (i + 1) % messages.length;
+          notesEl.innerText = messages[i];
+          notesEl.classList.remove("is-fading");
+        }, 450);
+      }, 3000);
+
+      /* 🎁 SURPRISE */
+      function showSurprise() {
+        document.getElementById("surprise").classList.add("is-visible");
+      }
+    </script>
+  </body>
+</html>
