@@ -27,6 +27,15 @@
         box-sizing: border-box;
       }
 
+      img {
+        -webkit-box-reflect: below 0 linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0) 52%,
+          rgba(255, 255, 255, 0.14) 100%
+        );
+      }
+
       body {
         margin: 0;
         min-height: 100vh;
@@ -416,7 +425,8 @@
         display: flex;
         overflow-x: auto;
         gap: 1rem;
-        padding: 0.5rem clamp(1rem, 4vw, 2rem) 1.25rem;
+        padding: 0.5rem clamp(1rem, 4vw, 2rem)
+          clamp(3rem, 14vw, 5rem);
         scroll-snap-type: x mandatory;
         scrollbar-width: thin;
         scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
@@ -436,25 +446,13 @@
         flex: 0 0 auto;
         scroll-snap-align: center;
         border-radius: 18px;
-        overflow: hidden;
+        overflow: visible;
         box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
         border: 2px solid rgba(255, 255, 255, 0.35);
         transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
           box-shadow 0.45s ease;
         animation: galleryStagger 0.7s ease backwards;
-      }
-
-      .gallery-card:nth-child(1) {
-        animation-delay: 0.1s;
-      }
-      .gallery-card:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-      .gallery-card:nth-child(3) {
-        animation-delay: 0.3s;
-      }
-      .gallery-card:nth-child(4) {
-        animation-delay: 0.4s;
+        animation-delay: calc(var(--i, 0) * 0.04s);
       }
 
       @keyframes galleryStagger {
@@ -479,6 +477,7 @@
         width: auto;
         max-width: 280px;
         object-fit: cover;
+        border-radius: 15px;
       }
 
       /* NOTES */
@@ -511,6 +510,66 @@
       .notes.is-fading {
         opacity: 0;
         transform: translateY(6px);
+      }
+
+      /* BACKGROUND MUSIC */
+      .music-fab {
+        position: fixed;
+        bottom: 1.25rem;
+        right: 1.25rem;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.35rem;
+        line-height: 1;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+        transition: transform 0.3s ease, box-shadow 0.3s ease,
+          background 0.3s ease;
+      }
+
+      .music-fab:hover {
+        transform: scale(1.06);
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 12px 36px rgba(201, 75, 124, 0.35);
+      }
+
+      .music-fab:active {
+        transform: scale(0.96);
+      }
+
+      .music-fab.is-playing {
+        background: rgba(255, 200, 220, 0.25);
+        border-color: rgba(255, 220, 235, 0.65);
+      }
+
+      .music-fab.is-idle {
+        animation: musicHint 2.2s ease-in-out infinite;
+      }
+
+      @keyframes musicHint {
+        0%,
+        100% {
+          box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+        }
+        50% {
+          box-shadow: 0 8px 32px rgba(255, 150, 190, 0.45);
+        }
+      }
+
+      .music-fab__glyph {
+        display: block;
+        transform: translateY(1px);
       }
 
       /* PAGE LOADER */
@@ -623,6 +682,10 @@
         .page-loader__count.is-tick {
           animation: none;
         }
+
+        .music-fab.is-idle {
+          animation: none;
+        }
       }
     </style>
   </head>
@@ -655,10 +718,24 @@
       <span class="heart">♥</span>
     </div>
 
-    <!-- 🎵 BACKGROUND MUSIC -->
-    <audio autoplay loop>
-      <source src="music.mp3" type="audio/mpeg" />
+    <!-- 🎵 Online MP3 — replace src with any direct .mp3 URL you like (tap ♪ to play) -->
+    <audio id="bgMusic" loop preload="metadata">
+      <source
+        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        type="audio/mpeg"
+      />
     </audio>
+    <button
+      type="button"
+      class="music-fab is-idle"
+      id="musicToggle"
+      aria-pressed="false"
+      aria-controls="bgMusic"
+      aria-label="Play background music"
+      title="Music on/off"
+    >
+      <span class="music-fab__glyph" aria-hidden="true">♪</span>
+    </button>
 
     <div class="hero">
       <div class="hero-card">
@@ -689,29 +766,65 @@
     <div class="gallery-wrap">
       <p class="gallery-title">Our moments</p>
       <div class="gallery">
-        <figure class="gallery-card">
-          <img
-            src="https://picsum.photos/id/1015/400/300"
-            alt="Gallery photo 1"
-          />
+        <figure class="gallery-card" style="--i: 1">
+          <img src="img/1.jpeg" alt="Gallery photo 1" />
         </figure>
-        <figure class="gallery-card">
-          <img
-            src="https://picsum.photos/id/1016/400/300"
-            alt="Gallery photo 2"
-          />
+        <figure class="gallery-card" style="--i: 2">
+          <img src="img/2.jpeg" alt="Gallery photo 2" />
         </figure>
-        <figure class="gallery-card">
-          <img
-            src="https://picsum.photos/id/1018/400/300"
-            alt="Gallery photo 3"
-          />
+        <figure class="gallery-card" style="--i: 3">
+          <img src="img/3.jpeg" alt="Gallery photo 3" />
         </figure>
-        <figure class="gallery-card">
-          <img
-            src="https://picsum.photos/id/1025/400/300"
-            alt="Gallery photo 4"
-          />
+        <figure class="gallery-card" style="--i: 4">
+          <img src="img/4.jpeg" alt="Gallery photo 4" />
+        </figure>
+        <figure class="gallery-card" style="--i: 5">
+          <img src="img/5.jpeg" alt="Gallery photo 5" />
+        </figure>
+        <figure class="gallery-card" style="--i: 6">
+          <img src="img/6.jpeg" alt="Gallery photo 6" />
+        </figure>
+        <figure class="gallery-card" style="--i: 7">
+          <img src="img/7.jpeg" alt="Gallery photo 7" />
+        </figure>
+        <figure class="gallery-card" style="--i: 8">
+          <img src="img/8.jpeg" alt="Gallery photo 8" />
+        </figure>
+        <figure class="gallery-card" style="--i: 9">
+          <img src="img/9.jpeg" alt="Gallery photo 9" />
+        </figure>
+        <figure class="gallery-card" style="--i: 10">
+          <img src="img/10.jpeg" alt="Gallery photo 10" />
+        </figure>
+        <figure class="gallery-card" style="--i: 11">
+          <img src="img/11.jpeg" alt="Gallery photo 11" />
+        </figure>
+        <figure class="gallery-card" style="--i: 12">
+          <img src="img/12.jpeg" alt="Gallery photo 12" />
+        </figure>
+        <figure class="gallery-card" style="--i: 13">
+          <img src="img/13.jpeg" alt="Gallery photo 13" />
+        </figure>
+        <figure class="gallery-card" style="--i: 14">
+          <img src="img/14.jpeg" alt="Gallery photo 14" />
+        </figure>
+        <figure class="gallery-card" style="--i: 15">
+          <img src="img/15.jpeg" alt="Gallery photo 15" />
+        </figure>
+        <figure class="gallery-card" style="--i: 16">
+          <img src="img/16.jpeg" alt="Gallery photo 16" />
+        </figure>
+        <figure class="gallery-card" style="--i: 17">
+          <img src="img/17.jpeg" alt="Gallery photo 17" />
+        </figure>
+        <figure class="gallery-card" style="--i: 18">
+          <img src="img/18.jpeg" alt="Gallery photo 18" />
+        </figure>
+        <figure class="gallery-card" style="--i: 19">
+          <img src="img/19.jpeg" alt="Gallery photo 19" />
+        </figure>
+        <figure class="gallery-card" style="--i: 20">
+          <img src="img/20.jpeg" alt="Gallery photo 20" />
         </figure>
       </div>
     </div>
@@ -757,6 +870,41 @@
         }
 
         step();
+      })();
+
+      /* 🎵 MUSIC */
+      (function initMusic() {
+        const audio = document.getElementById("bgMusic");
+        const btn = document.getElementById("musicToggle");
+        const glyph = btn.querySelector(".music-fab__glyph");
+        if (!audio || !btn) return;
+
+        audio.volume = 0.45;
+
+        function syncButton() {
+          const playing = !audio.paused;
+          btn.classList.toggle("is-playing", playing);
+          btn.classList.toggle("is-idle", !playing);
+          btn.setAttribute("aria-pressed", playing ? "true" : "false");
+          btn.setAttribute(
+            "aria-label",
+            playing ? "Pause background music" : "Play background music",
+          );
+          glyph.textContent = playing ? "⏸" : "♪";
+        }
+
+        btn.addEventListener("click", () => {
+          if (audio.paused) {
+            audio.play().catch(() => {});
+          } else {
+            audio.pause();
+          }
+        });
+
+        audio.addEventListener("play", syncButton);
+        audio.addEventListener("pause", syncButton);
+        audio.addEventListener("ended", syncButton);
+        syncButton();
       })();
 
       /* 🎉 COUNTDOWN */
