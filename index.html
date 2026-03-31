@@ -613,6 +613,15 @@
         pointer-events: none;
       }
 
+      .page-loader--needs-tap {
+        cursor: pointer;
+      }
+
+      .page-loader--needs-tap:focus-visible {
+        outline: 2px solid rgba(255, 179, 201, 0.9);
+        outline-offset: 4px;
+      }
+
       .page-loader__spinner {
         width: 56px;
         height: 56px;
@@ -705,15 +714,16 @@
   <body class="is-loading">
     <div
       id="page-loader"
-      class="page-loader"
-      role="status"
+      class="page-loader page-loader--needs-tap"
+      role="button"
+      tabindex="0"
       aria-live="polite"
       aria-busy="true"
-      aria-label="Loading page"
+      aria-label="Tap to start, then countdown"
     >
       <div class="page-loader__spinner" aria-hidden="true"></div>
-      <p class="page-loader__label">Get ready</p>
-      <div class="page-loader__count" id="loader-count">10</div>
+      <p class="page-loader__label" id="loader-label">Tap to start</p>
+      <div class="page-loader__count" id="loader-count" hidden>10</div>
     </div>
 
     <div class="page-bg" aria-hidden="true"></div>
@@ -848,21 +858,41 @@
     </div>
 
     <script>
-      /* ⏳ PRE-LOAD: 10 → 1 + spinner */
+      /* ⏳ PRE-LOAD: tap (unlocks audio) → 10 → 1 + spinner */
       (function initPageLoader() {
         const loader = document.getElementById("page-loader");
         const countEl = document.getElementById("loader-count");
+        const labelEl = document.getElementById("loader-label");
+        const audio = document.getElementById("bgMusic");
         const reduced = window.matchMedia(
           "(prefers-reduced-motion: reduce)",
         ).matches;
         const stepMs = reduced ? 280 : 1000;
 
         let n = 10;
+        let started = false;
+
+        function unlockAudioFromGesture() {
+          if (!audio) return Promise.resolve();
+          audio.volume = 0.45;
+          return audio
+            .play()
+            .then(() => {
+              audio.pause();
+              audio.currentTime = 0;
+            })
+            .catch(() => {});
+        }
 
         function finish() {
           loader.classList.add("is-done");
           loader.setAttribute("aria-busy", "false");
+          loader.removeAttribute("role");
+          loader.removeAttribute("tabindex");
           document.body.classList.remove("is-loading");
+          if (audio) {
+            audio.play().catch(() => {});
+          }
           setTimeout(() => loader.remove(), 600);
         }
 
@@ -882,7 +912,30 @@
           setTimeout(step, stepMs);
         }
 
-        step();
+        function beginCountdown() {
+          if (started) return;
+          started = true;
+          loader.classList.remove("page-loader--needs-tap");
+          loader.setAttribute("role", "status");
+          loader.setAttribute("aria-label", "Countdown");
+          if (labelEl) labelEl.textContent = "Get ready";
+          countEl.hidden = false;
+          n = 10;
+          step();
+        }
+
+        function onStart(ev) {
+          if (started) return;
+          if (ev.type === "keydown" && ev.key !== "Enter" && ev.key !== " ")
+            return;
+          ev.preventDefault();
+          loader.removeEventListener("pointerdown", onStart);
+          loader.removeEventListener("keydown", onStart);
+          unlockAudioFromGesture().finally(beginCountdown);
+        }
+
+        loader.addEventListener("pointerdown", onStart);
+        loader.addEventListener("keydown", onStart);
       })();
 
       /* 🎵 MUSIC */
@@ -924,6 +977,8 @@
       const birthday = new Date("2026-04-01").getTime();
 
       setInterval(() => {
+        const el = document.getElementById("countdown");
+        if (!el) return;
         const now = new Date().getTime();
         const diff = birthday - now;
 
@@ -932,8 +987,7 @@
           (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
         );
 
-        document.getElementById("countdown").innerHTML =
-          "Countdown: " + days + " days " + hours + " hours";
+        el.innerHTML = "Countdown: " + days + " days " + hours + " hours";
       }, 1000);
 
       /* 💌 LOVE NOTES SLIDER */
