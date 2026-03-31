@@ -405,13 +405,30 @@
         }
       }
 
-      /* GALLERY */
+      /* GALLERY (hidden until surprise) */
       .gallery-wrap {
         position: relative;
         z-index: 1;
         padding: 0 clamp(0.75rem, 3vw, 1.5rem) 2rem;
         max-width: min(960px, 100%);
         margin: 0 auto;
+        display: none;
+      }
+
+      .gallery-wrap.is-revealed {
+        display: block;
+        animation: galleryReveal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      @keyframes galleryReveal {
+        from {
+          opacity: 0;
+          transform: translateY(28px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
       }
 
       .gallery-title {
@@ -656,6 +673,7 @@
 
         .hero-card,
         .gallery-card,
+        .gallery-wrap.is-revealed,
         .surprise-msg.is-visible {
           animation: none !important;
         }
@@ -712,12 +730,9 @@
       <span class="heart">♥</span>
     </div>
 
-    <!-- 🎵 Online MP3 — replace src with any direct .mp3 URL you like (tap ♪ to play) -->
+    <!-- 🎵 Put your file at mp3/track.mp3 (tap ♪ to play) -->
     <audio id="bgMusic" loop preload="metadata">
-      <source
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-        type="audio/mpeg"
-      />
+      <source src="mp3/track001.mp3" type="audio/mpeg" />
     </audio>
     <button
       type="button"
@@ -738,7 +753,7 @@
         <h2>My Beautiful Wife</h2>
 
         <!-- ⏳ COUNTDOWN -->
-        <div class="countdown" id="countdown"></div>
+        <!-- <div class="countdown" id="countdown"></div> -->
 
         <p>
           You are my happiness, my strength, and my forever love. I’m so lucky
@@ -756,8 +771,12 @@
       </div>
     </div>
 
-    <!-- 🖼️ PHOTO GALLERY -->
-    <div class="gallery-wrap">
+    <!-- 🖼️ PHOTO GALLERY (shown after surprise) -->
+    <div
+      class="gallery-wrap"
+      id="gallery-wrap"
+      aria-hidden="true"
+    >
       <p class="gallery-title">Our moments</p>
       <div class="gallery">
         <figure class="gallery-card" style="--i: 1">
@@ -940,6 +959,15 @@
       /* 🎁 SURPRISE */
       function showSurprise() {
         document.getElementById("surprise").classList.add("is-visible");
+        const gallery = document.getElementById("gallery-wrap");
+        if (!gallery) return;
+        if (!gallery.classList.contains("is-revealed")) {
+          gallery.classList.add("is-revealed");
+          gallery.setAttribute("aria-hidden", "false");
+          requestAnimationFrame(() => {
+            gallery.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          });
+        }
       }
     </script>
   </body>
